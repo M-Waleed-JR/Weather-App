@@ -34,11 +34,13 @@ const ICON_MAP = {
   "50n": WiFog,
 };
 
-const DEFAULT_COLOR = "#fff";
-
-export default function WeatherIcon({ code, size = 56, variant = "scene" }) {
+export default function WeatherIcon({ code, size = 56, isDay = true }) {
   const Icon = ICON_MAP[code] || WiCloud;
-  const color = variant === "glyph" ? undefined : DEFAULT_COLOR;
+  const color = isDay ? "#F59E0B" : "#38BDF8";
 
-  return <Icon size={size} color={color} />;
+  return (
+    <div className="drop-shadow-lg">
+      <Icon size={size} color={color} />
+    </div>
+  );
 }

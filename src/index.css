@@ -1,15 +1,47 @@
 @import "tailwindcss";
 
 body {
-  font-family: "Alexandria", sans-serif;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
   margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 input::-webkit-search-cancel-button {
   display: none;
 }
 
-/* ---- Ambient sky theme animations ---- */
+/* Smooth transitions for theme changes */
+* {
+  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+/* Weather icon animations */
+@keyframes weather-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes weather-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.weather-icon-animate {
+  animation: weather-float 4s ease-in-out infinite;
+}
+
+/* Ambient sky theme animations */
 @keyframes tg-slow-spin {
   to {
     transform: rotate(360deg);
@@ -62,7 +94,8 @@ input::-webkit-search-cancel-button {
   .tg-rays,
   .tg-drift,
   .tg-star,
-  .tg-moon {
+  .tg-moon,
+  .weather-icon-animate {
     animation: none;
   }
 }

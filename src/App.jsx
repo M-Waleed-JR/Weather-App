@@ -23,12 +23,12 @@ function App() {
 
     let cancelled = false;
 
-    setIsLoading(false);
+    setIsLoading(true);
     setError(false);
 
     axios
       .get(
-        `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric&lang=ar`,
+        `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric&lang=ar`
       )
       .then((res) => {
         if (cancelled) return;
@@ -66,9 +66,9 @@ function App() {
   }, [city]);
 
   return (
-    <main className="relative min-h-screen overflow-hidden">
+    <main className="relative min-h-dvh overflow-hidden" dir="rtl">
       <ThemeBackground isDay={isDay} />
-      <div className="relative z-10 flex min-h-screen flex-col items-center justify-center p-4">
+      <div className="relative z-10 mx-auto flex min-h-dvh w-full max-w-5xl flex-col items-center justify-center gap-10 px-6 py-8">
         <SearchBar onSearch={handleSearch} isDay={isDay} />
         <WeatherCard
           data={weatherData}
