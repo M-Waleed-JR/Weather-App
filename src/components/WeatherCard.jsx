@@ -1,8 +1,10 @@
 import WeatherIcon from "./WeatherIcon";
 import CurrentDate from "./CurrentDate";
 
-function getThemeClasses(isDay) {
-  return isDay
+function getThemeClasses(timeOfDay) {
+  const isLight = timeOfDay === "day" || timeOfDay === "sunrise";
+
+  return isLight
     ? {
         card: "bg-white/30 border-white/40",
         cardInner: "bg-white/40",
@@ -23,8 +25,8 @@ function getThemeClasses(isDay) {
       };
 }
 
-function WeatherCardSkeleton({ isDay }) {
-  const { card } = getThemeClasses(isDay);
+function WeatherCardSkeleton({ timeOfDay }) {
+  const { card } = getThemeClasses(timeOfDay);
 
   return (
     <div className="w-full max-w-md">
@@ -54,8 +56,8 @@ function WeatherCardSkeleton({ isDay }) {
   );
 }
 
-function WeatherCardError({ isDay }) {
-  const { card, muted } = getThemeClasses(isDay);
+function WeatherCardError({ timeOfDay }) {
+  const { card, muted } = getThemeClasses(timeOfDay);
 
   return (
     <div className="w-full max-w-md">
@@ -107,15 +109,16 @@ function StatCard({ icon, label, value, unit, theme }) {
   );
 }
 
-export default function WeatherCard({ data, loading, error, isDay }) {
-  if (loading) return <WeatherCardSkeleton isDay={isDay} />;
-  if (error) return <WeatherCardError isDay={isDay} />;
+export default function WeatherCard({ data, loading, error, timeOfDay }) {
+  if (loading) return <WeatherCardSkeleton timeOfDay={timeOfDay} />;
+  if (error) return <WeatherCardError timeOfDay={timeOfDay} />;
   if (!data) return null;
 
   const { cityName, currentTemp, maxTemp, minTemp, description, iconCode } =
     data;
-  const theme = getThemeClasses(isDay);
+  const theme = getThemeClasses(timeOfDay);
   const { card, heading, muted, faint, divider } = theme;
+  const isLight = timeOfDay === "day" || timeOfDay === "sunrise";
 
   return (
     <div className="w-full max-w-md">
@@ -130,16 +133,16 @@ export default function WeatherCard({ data, loading, error, isDay }) {
             <p className={`text-base mt-1 ${muted}`}>{CurrentDate()}</p>
           </div>
           <div className="weather-icon-animate">
-            <WeatherIcon code={iconCode} size={64} isDay={isDay} />
+            <WeatherIcon code={iconCode} size={64} isDay={isLight} />
           </div>
         </div>
 
         {/* Main Temperature Display */}
-        <div className="flex items-end justify-center mb-8">
+        <div className="flex items-end justify-center mb-8" dir="ltr">
           <span className={`text-[10rem] font-bold  leading-none ${heading}`}>
             {currentTemp}
           </span>
-          <span className={`text-3xl font-light mb-4 ${faint}`}>°م</span>
+          <span className={`text-3xl font-bold mb-4 ${faint}`}>°C</span>
         </div>
 
         {/* Divider */}

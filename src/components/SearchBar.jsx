@@ -1,10 +1,12 @@
 import { FaSearch } from "react-icons/fa";
 import { useState } from "react";
 
-const SearchBar = ({ onSearch, isDay }) => {
+const SearchBar = ({ onSearch, timeOfDay }) => {
   const [city, setCity] = useState("");
 
-  const styles = isDay
+  const isLight = timeOfDay === "day" || timeOfDay === "sunrise";
+
+  const styles = isLight
     ? {
         field:
           "bg-white/50 border-slate-200/60 focus-within:border-sky-400 focus-within:bg-white/70 focus-within:ring-sky-400/20",

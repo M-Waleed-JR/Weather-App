@@ -1,6 +1,7 @@
 import WeatherCard from "./components/WeatherCard";
 import SearchBar from "./components/SearchBar";
 import ThemeBackground from "./components/ThemeBackground";
+import ThemeDebugger from "./components/ThemeDebugger";
 import useTimeOfDay from "./hooks/useTimeOfDay";
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
@@ -8,11 +9,25 @@ import axios from "axios";
 const API_KEY = "e34faf2ef7f53a7ce32b21ff123d57f5";
 
 function App() {
-  const isDay = useTimeOfDay();
+  const actualTimeOfDay = useTimeOfDay();
+  const [timeOfDay, setTimeOfDay] = useState(actualTimeOfDay);
   const [city, setCity] = useState("cairo");
   const [weatherData, setWeatherData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
+
+  // Update timeOfDay when actualTimeOfDay changes (only if in auto mode)
+  useEffect(() => {
+    setTimeOfDay(actualTimeOfDay);
+  }, [actualTimeOfDay]);
+
+  const handleTimeChange = useCallback((selectedTime) => {
+    if (selectedTime === "auto") {
+      setTimeOfDay(actualTimeOfDay);
+    } else {
+      setTimeOfDay(selectedTime);
+    }
+  }, [actualTimeOfDay]);
 
   const handleSearch = useCallback((newCity) => {
     setCity(newCity);
@@ -67,14 +82,15 @@ function App() {
 
   return (
     <main className="relative min-h-dvh overflow-hidden" dir="rtl">
-      <ThemeBackground isDay={isDay} />
+      <ThemeBackground timeOfDay={timeOfDay} />
+      <ThemeDebugger onTimeChange={handleTimeChange} />
       <div className="relative z-10 mx-auto flex min-h-dvh w-full max-w-5xl flex-col items-center justify-center gap-10 px-6 py-8">
-        <SearchBar onSearch={handleSearch} isDay={isDay} />
+        <SearchBar onSearch={handleSearch} timeOfDay={timeOfDay} />
         <WeatherCard
           data={weatherData}
           loading={isLoading}
           error={error}
-          isDay={isDay}
+          timeOfDay={timeOfDay}
         />
       </div>
     </main>

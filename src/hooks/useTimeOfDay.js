@@ -1,20 +1,36 @@
 import { useEffect, useState } from "react";
 
-const DAY_START_HOUR = 6;
-const DAY_END_HOUR = 18;
+// Time periods based on actual sun positions
+const SUNRISE_START = 5;  // 5 AM
+const SUNRISE_END = 8;    // 8 AM
+const DAY_START = 8;      // 8 AM
+const DAY_END = 17;       // 5 PM
+const SUNSET_START = 17;  // 5 PM
+const SUNSET_END = 20;    // 8 PM
+const NIGHT_START = 20;   // 8 PM
+const NIGHT_END = 5;      // 5 AM
 
-export function getIsDay(date = new Date()) {
+export function getTimeOfDay(date = new Date()) {
   const hour = date.getHours();
-  return hour >= DAY_START_HOUR && hour < DAY_END_HOUR;
+
+  if (hour >= SUNRISE_START && hour < SUNRISE_END) {
+    return "sunrise";
+  } else if (hour >= DAY_START && hour < DAY_END) {
+    return "day";
+  } else if (hour >= SUNSET_START && hour < SUNSET_END) {
+    return "sunset";
+  } else {
+    return "night";
+  }
 }
 
 export default function useTimeOfDay() {
-  const [isDay, setIsDay] = useState(() => getIsDay());
+  const [timeOfDay, setTimeOfDay] = useState(() => getTimeOfDay());
 
   useEffect(() => {
-    const timer = setInterval(() => setIsDay(getIsDay()), 60_000);
+    const timer = setInterval(() => setTimeOfDay(getTimeOfDay()), 60_000);
     return () => clearInterval(timer);
   }, []);
 
-  return isDay;
+  return timeOfDay;
 }
