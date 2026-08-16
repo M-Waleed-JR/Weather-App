@@ -7,8 +7,6 @@ const DAY_START = 8;      // 8 AM
 const DAY_END = 17;       // 5 PM
 const SUNSET_START = 17;  // 5 PM
 const SUNSET_END = 20;    // 8 PM
-const NIGHT_START = 20;   // 8 PM
-const NIGHT_END = 5;      // 5 AM
 
 export function getTimeOfDay(date = new Date()) {
   const hour = date.getHours();

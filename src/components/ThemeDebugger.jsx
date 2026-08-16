@@ -1,21 +1,11 @@
 import { useState } from "react";
 
-export default function ThemeDebugger({ onTimeChange }) {
-  const [selectedTime, setSelectedTime] = useState("auto");
+export default function ThemeDebugger({ onTimeChange, themes, currentTheme }) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const themes = [
-    { value: "auto", label: "تلقائي", time: "حسب الوقت الفعلي" },
-    { value: "sunrise", label: "شروق", time: "5:00 - 8:00" },
-    { value: "day", label: "نهار", time: "8:00 - 17:00" },
-    { value: "sunset", label: "غروب", time: "17:00 - 20:00" },
-    { value: "night", label: "ليل", time: "20:00 - 5:00" },
-  ];
-
   const handleChange = (value) => {
-    setSelectedTime(value);
     onTimeChange(value);
-    setIsOpen(false); // Close menu after selection on mobile/tablet
+    setIsOpen(false);
   };
 
   return (
@@ -41,16 +31,19 @@ export default function ThemeDebugger({ onTimeChange }) {
                 <button
                   key={theme.value}
                   onClick={() => handleChange(theme.value)}
-                  className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                    selectedTime === theme.value
+                  className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all flex items-center gap-3 ${
+                    currentTheme === theme.value
                       ? "bg-sky-500 text-white"
                       : "bg-white/10 text-white/70 hover:bg-white/20"
                   }`}
                 >
-                  <div className="flex justify-between items-center gap-3">
-                    <span>{theme.label}</span>
-                    <span className="text-xs opacity-60">{theme.time}</span>
-                  </div>
+                  <span className="text-xl">{theme.icon}</span>
+                  <span className="flex-1 text-right">{theme.label}</span>
+                  {currentTheme === theme.value && (
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  )}
                 </button>
               ))}
             </div>
@@ -66,16 +59,19 @@ export default function ThemeDebugger({ onTimeChange }) {
             <button
               key={theme.value}
               onClick={() => handleChange(theme.value)}
-              className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                selectedTime === theme.value
+              className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all flex items-center gap-3 ${
+                currentTheme === theme.value
                   ? "bg-sky-500 text-white"
                   : "bg-white/10 text-white/70 hover:bg-white/20"
               }`}
             >
-              <div className="flex justify-between items-center gap-3">
-                <span>{theme.label}</span>
-                <span className="text-xs opacity-60">{theme.time}</span>
-              </div>
+              <span className="text-xl">{theme.icon}</span>
+              <span className="flex-1 text-right">{theme.label}</span>
+              {currentTheme === theme.value && (
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+              )}
             </button>
           ))}
         </div>

@@ -34,9 +34,18 @@ const ICON_MAP = {
   "50n": WiFog,
 };
 
-export default function WeatherIcon({ code, size = 56, isDay = true }) {
+export default function WeatherIcon({ code, size = 56, timeOfDay = "day" }) {
   const Icon = ICON_MAP[code] || WiCloud;
-  const color = isDay ? "#F59E0B" : "#38BDF8";
+
+  // Theme-aware colors
+  const colors = {
+    sunrise: "#F59E0B", // amber
+    day: "#F59E0B",     // amber
+    sunset: "#FB923C",  // orange
+    night: "#38BDF8",   // sky blue
+  };
+
+  const color = colors[timeOfDay] || colors.day;
 
   return (
     <div className="drop-shadow-lg">

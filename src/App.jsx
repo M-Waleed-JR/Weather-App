@@ -2,88 +2,42 @@ import WeatherCard from "./components/WeatherCard";
 import SearchBar from "./components/SearchBar";
 import ThemeBackground from "./components/ThemeBackground";
 import ThemeDebugger from "./components/ThemeDebugger";
-import useTimeOfDay from "./hooks/useTimeOfDay";
-import { useState, useEffect, useCallback } from "react";
-import axios from "axios";
-
-const API_KEY = "e34faf2ef7f53a7ce32b21ff123d57f5";
+import { useWeather } from "./hooks/useWeather";
+import { useTheme } from "./hooks/useTheme";
+import { useState, useCallback } from "react";
 
 function App() {
-  const actualTimeOfDay = useTimeOfDay();
-  const [timeOfDay, setTimeOfDay] = useState(actualTimeOfDay);
+  const { timeOfDay, handleThemeChange, themes, currentTheme } = useTheme();
   const [city, setCity] = useState("cairo");
-  const [weatherData, setWeatherData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  // Update timeOfDay when actualTimeOfDay changes (only if in auto mode)
-  useEffect(() => {
-    setTimeOfDay(actualTimeOfDay);
-  }, [actualTimeOfDay]);
-
-  const handleTimeChange = useCallback((selectedTime) => {
-    if (selectedTime === "auto") {
-      setTimeOfDay(actualTimeOfDay);
-    } else {
-      setTimeOfDay(selectedTime);
+  const [unit, setUnit] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("weather-app-unit") || "celsius";
     }
-  }, [actualTimeOfDay]);
+    return "celsius";
+  });
+
+  const { weatherData, isLoading, error } = useWeather(city, timeOfDay);
 
   const handleSearch = useCallback((newCity) => {
     setCity(newCity);
   }, []);
 
-  useEffect(() => {
-    if (!city) return;
-
-    let cancelled = false;
-
-    setIsLoading(true);
-    setError(false);
-
-    axios
-      .get(
-        `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric&lang=ar`
-      )
-      .then((res) => {
-        if (cancelled) return;
-
-        const cityName = res.data.city.name;
-        const currentTemp = Math.round(res.data.list[0].main.temp);
-        const first8Hours = res.data.list.slice(0, 8);
-        const allTemps = first8Hours.map((item) => item.main.temp);
-        const maxTemp = Math.round(Math.max(...allTemps));
-        const minTemp = Math.round(Math.min(...allTemps));
-        const iconCode = res.data.list[0].weather[0].icon;
-        const description = res.data.list[0].weather[0].description;
-
-        setWeatherData({
-          cityName,
-          currentTemp,
-          maxTemp,
-          minTemp,
-          description,
-          iconCode,
-        });
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setError(true);
-        setWeatherData(null);
-      })
-      .finally(() => {
-        if (!cancelled) setIsLoading(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [city]);
+  const handleUnitToggle = useCallback(() => {
+    setUnit((prev) => {
+      const newUnit = prev === "celsius" ? "fahrenheit" : "celsius";
+      localStorage.setItem("weather-app-unit", newUnit);
+      return newUnit;
+    });
+  }, []);
 
   return (
     <main className="relative min-h-dvh overflow-hidden" dir="rtl">
       <ThemeBackground timeOfDay={timeOfDay} />
-      <ThemeDebugger onTimeChange={handleTimeChange} />
+      <ThemeDebugger
+        onTimeChange={handleThemeChange}
+        themes={themes}
+        currentTheme={currentTheme}
+      />
       <div className="relative z-10 mx-auto flex min-h-dvh w-full max-w-5xl flex-col items-center justify-center gap-10 px-6 py-8">
         <SearchBar onSearch={handleSearch} timeOfDay={timeOfDay} />
         <WeatherCard
@@ -91,6 +45,8 @@ function App() {
           loading={isLoading}
           error={error}
           timeOfDay={timeOfDay}
+          unit={unit}
+          onUnitToggle={handleUnitToggle}
         />
       </div>
     </main>

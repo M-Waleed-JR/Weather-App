@@ -1,7 +1,11 @@
 @import "tailwindcss";
 
+@theme {
+  --font-arabic: "Alexandria", "Inter", system-ui, -apple-system, sans-serif;
+}
+
 body {
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-family: var(--font-arabic);
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -41,60 +45,7 @@ input::-webkit-search-cancel-button {
   animation: weather-float 4s ease-in-out infinite;
 }
 
-/* Ambient sky theme animations */
-@keyframes tg-slow-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-@keyframes tg-drift {
-  0%,
-  100% {
-    transform: translate(0, 0);
-  }
-  50% {
-    transform: translate(8px, -3px);
-  }
-}
-@keyframes tg-twinkle {
-  0%,
-  100% {
-    opacity: 0.2;
-  }
-  50% {
-    opacity: 0.9;
-  }
-}
-@keyframes tg-float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-6px);
-  }
-}
-
-.tg-rays {
-  animation: tg-slow-spin 46s linear infinite;
-  transform-box: fill-box;
-  transform-origin: center;
-}
-.tg-drift {
-  animation: tg-drift 9s ease-in-out infinite;
-}
-.tg-star {
-  animation: tg-twinkle 3.4s ease-in-out infinite;
-}
-.tg-moon {
-  animation: tg-float 7s ease-in-out infinite;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .tg-rays,
-  .tg-drift,
-  .tg-star,
-  .tg-moon,
   .weather-icon-animate {
     animation: none;
   }
