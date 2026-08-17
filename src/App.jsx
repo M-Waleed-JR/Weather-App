@@ -33,11 +33,11 @@ function App() {
   return (
     <main className="relative min-h-dvh overflow-hidden" dir="rtl">
       <ThemeBackground timeOfDay={timeOfDay} />
-      <ThemeDebugger
+      {/* <ThemeDebugger
         onTimeChange={handleThemeChange}
         themes={themes}
         currentTheme={currentTheme}
-      />
+      /> */}
       <div className="relative z-10 mx-auto flex min-h-dvh w-full max-w-5xl flex-col items-center justify-center gap-10 px-6 py-8">
         <SearchBar onSearch={handleSearch} timeOfDay={timeOfDay} />
         <WeatherCard

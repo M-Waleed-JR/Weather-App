@@ -18,9 +18,13 @@ export function useWeather(city, timeOfDay) {
     setError(false);
 
     try {
-      const res = await axios.get(
-        `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric&lang=ar`
-      );
+      // Check if city is coordinates (lat,lon format)
+      const isCoordinates = /^-?\d+\.?\d*,-?\d+\.?\d*$/.test(city.trim());
+      const url = isCoordinates
+        ? `https://api.openweathermap.org/data/2.5/forecast?lat=${city.split(",")[0]}&lon=${city.split(",")[1]}&appid=${API_KEY}&units=metric&lang=ar`
+        : `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric&lang=ar`;
+
+      const res = await axios.get(url);
 
       const cityName = res.data.city.name;
       const currentTemp = Math.round(res.data.list[0].main.temp);
