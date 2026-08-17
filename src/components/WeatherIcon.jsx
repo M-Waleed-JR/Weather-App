@@ -40,9 +40,9 @@ export default function WeatherIcon({ code, size = 56, timeOfDay = "day" }) {
   // Theme-aware colors
   const colors = {
     sunrise: "#F59E0B", // amber
-    day: "#F59E0B",     // amber
-    sunset: "#FB923C",  // orange
-    night: "#38BDF8",   // sky blue
+    day: "#F59E0B", // amber
+    sunset: "#FB923C", // orange
+    night: "#38BDF8", // sky blue
   };
 
   const color = colors[timeOfDay] || colors.day;
