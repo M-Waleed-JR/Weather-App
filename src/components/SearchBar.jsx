@@ -1,10 +1,11 @@
-import { FaSearch, FaMapMarkerAlt } from "react-icons/fa";
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState } from "react";
+import { useToast } from "../context/ToastContext.jsx";
+import { LocationIcon, SearchIcon } from "./Icons";
 
 const SearchBar = ({ onSearch, timeOfDay }) => {
   const [city, setCity] = useState("");
   const [isDetecting, setIsDetecting] = useState(false);
-  const debounceRef = useRef(null);
+  const { error: showToastError, info: showToastInfo } = useToast();
 
   const isLight = timeOfDay === "day" || timeOfDay === "sunrise";
 
@@ -24,32 +25,8 @@ const SearchBar = ({ onSearch, timeOfDay }) => {
         locationBtn: "text-white/40 hover:text-sky-400",
       };
 
-  // Debounced search
-  const debouncedSearch = useCallback(
-    (cityValue) => {
-      if (debounceRef.current) {
-        clearTimeout(debounceRef.current);
-      }
-      debounceRef.current = setTimeout(() => {
-        if (cityValue.trim() && onSearch) {
-          onSearch(cityValue.trim());
-        }
-      }, 300);
-    },
-    [onSearch],
-  );
-
-  const handleCityChange = (e) => {
-    const value = e.target.value;
-    setCity(value);
-    debouncedSearch(value);
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (debounceRef.current) {
-      clearTimeout(debounceRef.current);
-    }
     if (!city.trim()) return;
     if (onSearch) {
       onSearch(city.trim());
@@ -58,11 +35,12 @@ const SearchBar = ({ onSearch, timeOfDay }) => {
 
   const handleGeolocation = () => {
     if (!navigator.geolocation) {
-      alert("Geolocation is not supported by your browser");
+      showToastError("Geolocation is not supported by your browser");
       return;
     }
 
     setIsDetecting(true);
+    showToastInfo("جاري تحديد موقعك...");
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -73,28 +51,18 @@ const SearchBar = ({ onSearch, timeOfDay }) => {
         setIsDetecting(false);
       },
       (error) => {
-        console.error("Geolocation error:", error);
         let message = "Unable to retrieve your location";
         if (error.code === error.PERMISSION_DENIED) {
           message = "Location permission was denied. Please search manually.";
         } else if (error.code === error.TIMEOUT) {
           message = "Location request timed out. Please try again.";
         }
-        alert(message);
+        showToastError(message);
         setIsDetecting(false);
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
     );
   };
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      if (debounceRef.current) {
-        clearTimeout(debounceRef.current);
-      }
-    };
-  }, []);
 
   return (
     <div className="w-full max-w-md sm:max-w-lg lg:max-w-xl">
@@ -114,9 +82,7 @@ const SearchBar = ({ onSearch, timeOfDay }) => {
               isDetecting ? "جاري تحديد الموقع..." : "استخدام موقعي الحالي"
             }
           >
-            <FaMapMarkerAlt
-              className={`text-base ${isDetecting ? "animate-spin" : ""}`}
-            />
+            <LocationIcon className={`w-5 h-5 ${isDetecting ? "animate-spin" : ""}`} />
           </button>
           <input
             type="search"
@@ -124,7 +90,7 @@ const SearchBar = ({ onSearch, timeOfDay }) => {
             aria-label="البحث عن مدينة"
             className={`h-full w-full bg-transparent pr-6 pl-14 text-base outline-none ${styles.input}`}
             value={city}
-            onChange={handleCityChange}
+            onChange={(e) => setCity(e.target.value)}
             disabled={isDetecting}
           />
           <button
@@ -133,7 +99,7 @@ const SearchBar = ({ onSearch, timeOfDay }) => {
             aria-label="بحث"
             disabled={isDetecting}
           >
-            <FaSearch className="text-base" />
+            <SearchIcon className="w-5 h-5" />
           </button>
         </div>
       </form>

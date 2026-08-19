@@ -7,11 +7,19 @@ const THEME_VIDEOS = {
   night: "Themes/Night.mp4",
 };
 
+const THEME_POSTERS = {
+  sunrise: "Themes/sunrise-poster.svg",
+  day: "Themes/day-poster.svg",
+  sunset: "Themes/sunset-poster.svg",
+  night: "Themes/night-poster.svg",
+};
+
 export default function ThemeBackground({ timeOfDay }) {
   const videoRef = useRef(null);
 
   // Use relative paths that Vite/browsers can resolve based on the current location
   const activeVideoSrc = THEME_VIDEOS[timeOfDay] || THEME_VIDEOS.day;
+  const activePosterSrc = THEME_POSTERS[timeOfDay] || THEME_POSTERS.day;
 
   useEffect(() => {
     const video = videoRef.current;
@@ -58,6 +66,7 @@ export default function ThemeBackground({ timeOfDay }) {
         muted
         playsInline
         preload="auto"
+        poster={`${import.meta.env.BASE_URL}${activePosterSrc}`}
         style={{ objectPosition: "top right" }}
         className="absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out"
       >

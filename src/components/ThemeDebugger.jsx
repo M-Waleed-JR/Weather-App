@@ -1,109 +1,55 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { CheckIcon, ChevronDownIcon } from "./Icons";
 
 export default function ThemeDebugger({ onTimeChange, themes, currentTheme }) {
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
-  const handleChange = (value) => {
-    onTimeChange(value);
-    setIsOpen(false);
-  };
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
-    <>
-      {/* Mobile & Tablet: Top-right floating button */}
-      <div className="fixed top-4 right-4 z-50 lg:hidden">
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="bg-black/50 backdrop-blur-md rounded-full p-3 border border-white/20 text-white shadow-lg"
-          aria-label="اختبار الثيمات"
-        >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
-            />
-          </svg>
-        </button>
+    <div className="fixed top-4 right-4 z-50" ref={dropdownRef}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="bg-black/40 backdrop-blur-md rounded-xl px-4 py-2.5 border border-white/20 text-white text-sm font-medium flex items-center gap-2 shadow-lg hover:bg-black/50 transition-colors"
+        aria-label="Theme selector"
+        aria-expanded={isOpen}
+      >
+        <span className="text-lg">{themes.find(t => t.value === currentTheme)?.icon || "🌅"}</span>
+        <span className="hidden sm:inline">{themes.find(t => t.value === currentTheme)?.label || "Auto"}</span>
+        <ChevronDownIcon className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+      </button>
 
-        {/* Mobile/Tablet dropdown menu */}
-        {isOpen && (
-          <div className="absolute top-16 right-0 bg-black/50 backdrop-blur-md rounded-2xl p-4 border border-white/20 min-w-[240px] shadow-2xl">
-            <h3 className="text-white text-sm font-bold mb-3">
-              اختبار الثيمات
-            </h3>
-            <div className="flex flex-col gap-2">
-              {themes.map((theme) => (
-                <button
-                  key={theme.value}
-                  onClick={() => handleChange(theme.value)}
-                  className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all flex items-center gap-3 ${
-                    currentTheme === theme.value
-                      ? "bg-sky-500 text-white"
-                      : "bg-white/10 text-white/70 hover:bg-white/20"
-                  }`}
-                >
-                  <span className="text-xl">{theme.icon}</span>
-                  <span className="flex-1 text-right">{theme.label}</span>
-                  {currentTheme === theme.value && (
-                    <svg
-                      className="w-5 h-5"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Desktop: Top-right panel (always visible) */}
-      <div className="hidden lg:block fixed top-4 right-4 z-50 bg-black/50 backdrop-blur-md rounded-2xl p-4 border border-white/20 shadow-2xl">
-        <h3 className="text-white text-sm font-bold mb-3">اختبار الثيمات</h3>
-        <div className="flex flex-col gap-2">
+      {isOpen && (
+        <div className="absolute top-full right-0 mt-2 bg-black/60 backdrop-blur-md rounded-xl border border-white/10 p-2 min-w-40 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
           {themes.map((theme) => (
             <button
               key={theme.value}
-              onClick={() => handleChange(theme.value)}
-              className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all flex items-center gap-3 ${
+              onClick={() => {
+                onTimeChange(theme.value);
+                setIsOpen(false);
+              }}
+              className={`w-full px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-3 transition-colors ${
                 currentTheme === theme.value
-                  ? "bg-sky-500 text-white"
-                  : "bg-white/10 text-white/70 hover:bg-white/20"
+                  ? "bg-sky-500/20 text-sky-300"
+                  : "text-white/80 hover:bg-white/10"
               }`}
             >
-              <span className="text-xl">{theme.icon}</span>
-              <span className="flex-1 text-right">{theme.label}</span>
-              {currentTheme === theme.value && (
-                <svg
-                  className="w-5 h-5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              )}
+              <span className="text-base">{theme.icon}</span>
+              <span>{theme.label}</span>
+              {currentTheme === theme.value && <CheckIcon className="ml-auto w-4 h-4 text-sky-400" />}
             </button>
           ))}
         </div>
-      </div>
-    </>
+      )}
+    </div>
   );
 }

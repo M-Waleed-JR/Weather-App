@@ -4,6 +4,7 @@ import ThemeBackground from "./components/ThemeBackground";
 import ThemeDebugger from "./components/ThemeDebugger";
 import { useWeather } from "./hooks/useWeather";
 import { useTheme } from "./hooks/useTheme";
+import { ToastProvider } from "./context/ToastContext.jsx";
 import { useState, useCallback, useEffect } from "react";
 
 function App() {
@@ -27,8 +28,7 @@ function App() {
           setCity(`${latitude},${longitude}`);
           setIsGeoLoading(false);
         },
-        (err) => {
-          console.error("Geolocation error:", err);
+        () => {
           setCity("cairo");
           setIsGeoLoading(false);
         },
@@ -53,7 +53,8 @@ function App() {
   }, []);
 
   return (
-    <main className="relative min-h-dvh overflow-hidden" dir="rtl">
+    <ToastProvider>
+      <main className="relative min-h-dvh overflow-hidden" dir="rtl">
       <ThemeBackground timeOfDay={timeOfDay} />
       <ThemeDebugger
         onTimeChange={handleThemeChange}
@@ -72,6 +73,7 @@ function App() {
         />
       </div>
     </main>
+  </ToastProvider>
   );
 }
 

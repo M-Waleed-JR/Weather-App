@@ -1,5 +1,6 @@
 import CurrentDate from "./CurrentDate";
 import WeatherIcons from "./WeatherIcons";
+import { ChevronUpIcon, ChevronDownIcon, AlertCircleIcon } from "./Icons";
 
 function getThemeClasses(timeOfDay) {
   const isLight = timeOfDay === "day" || timeOfDay === "sunrise";
@@ -29,7 +30,6 @@ function WeatherCardSkeleton({ timeOfDay }) {
   const { card } = getThemeClasses(timeOfDay);
 
   return (
-
     <div className="w-full max-w-md sm:max-w-lg lg:max-w-xl">
       <div
         className={`w-full rounded-3xl ${card} backdrop-blur-xl border p-6 sm:p-8 animate-pulse`}
@@ -66,19 +66,7 @@ function WeatherCardError({ timeOfDay }) {
         className={`w-full rounded-3xl ${card} backdrop-blur-xl border p-6 sm:p-8`}
       >
         <div className="flex flex-col items-center justify-center py-8 text-center">
-          <svg
-            className={`w-16 h-16 mb-4 ${muted}`}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={1.5}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
-            />
-          </svg>
+          <AlertCircleIcon className={`${muted}`} />
           <p className={`text-lg font-medium ${muted}`}>
             تعذر تحميل بيانات الطقس
           </p>
@@ -98,7 +86,7 @@ function StatCard({ icon, label, value, unit, theme }) {
     <div
       className={`flex items-center gap-4 p-4 rounded-2xl ${cardInner} backdrop-blur-sm`}
     >
-      <div className={`flex-shrink-0 ${accent}`}>{icon}</div>
+      <div className={`shrink-0 ${accent}`}>{icon}</div>
       <div className="flex-1 min-w-0">
         <p className={`text-xs uppercase tracking-wider font-medium ${faint}`}>
           {label}
@@ -153,7 +141,9 @@ export default function WeatherCard({
               {cityName}
             </h2>
             <p className={`text-base mt-1 ${muted}`}>{description}</p>
-            <p className={`text-base mt-1 ${muted}`}>{CurrentDate()}</p>
+            <p className={`text-base mt-1 ${muted}`}>
+              <CurrentDate />
+            </p>
           </div>
           <div className="weather-icon-animate">
             <WeatherIcons code={iconCode} size={64} />
@@ -199,42 +189,14 @@ export default function WeatherCard({
         {/* Weather Stats Grid */}
         <div className="grid grid-cols-2 gap-4">
           <StatCard
-            icon={
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M5 15l7-7 7 7"
-                />
-              </svg>
-            }
+            icon={<ChevronUpIcon />}
             label="العظمى"
             value={displayMax}
             unit="°"
             theme={theme}
           />
           <StatCard
-            icon={
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            }
+            icon={<ChevronDownIcon />}
             label="الصغرى"
             value={displayMin}
             unit="°"
