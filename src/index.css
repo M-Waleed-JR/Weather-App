@@ -50,3 +50,55 @@ input::-webkit-search-cancel-button {
     animation: none;
   }
 }
+
+/* Hide scrollbar for horizontal scroll containers */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Tab content transition — fade + rise on tab switch */
+@keyframes tab-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tab-rise {
+  animation: tab-rise 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tab-rise {
+    animation: none;
+  }
+}
+
+/* Sliding active pill shadow assist for segmented tabs */
+@keyframes pill-pop {
+  from {
+    transform: scale(0.92);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.pill-pop {
+  animation: pill-pop 180ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pill-pop {
+    animation: none;
+  }
+}

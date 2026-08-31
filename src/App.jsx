@@ -2,6 +2,9 @@ import WeatherCard from "./components/WeatherCard";
 import SearchBar from "./components/SearchBar";
 import ThemeBackground from "./components/ThemeBackground";
 import ThemeDebugger from "./components/ThemeDebugger";
+import HourlyForecast from "./components/HourlyForecast";
+import DailyForecast from "./components/DailyForecast";
+import AdviceSection from "./components/AdviceSection";
 import { useWeather } from "./hooks/useWeather";
 import { useTheme } from "./hooks/useTheme";
 import { ToastProvider } from "./context/ToastContext.jsx";
@@ -10,7 +13,9 @@ import { useState, useCallback, useEffect } from "react";
 function App() {
   const { timeOfDay, handleThemeChange, themes, currentTheme } = useTheme();
   const [city, setCity] = useState("");
-  const [unit, setUnit] = useState(() => localStorage.getItem("weather-app-unit") || "celsius");
+  const [unit, setUnit] = useState(
+    () => localStorage.getItem("weather-app-unit") || "celsius",
+  );
 
   const { weatherData, isLoading, error } = useWeather(city, timeOfDay);
 
@@ -61,6 +66,24 @@ function App() {
             unit={unit}
             onUnitToggle={handleUnitToggle}
           />
+          {!isLoading && !error && weatherData && (
+            <>
+              <HourlyForecast
+                forecast={weatherData.hourlyForecast}
+                timeOfDay={timeOfDay}
+                unit={unit}
+              />
+              <DailyForecast
+                dailyForecast={weatherData.dailyForecast}
+                timeOfDay={timeOfDay}
+                unit={unit}
+              />
+              <AdviceSection
+                advice={weatherData.advice}
+                timeOfDay={timeOfDay}
+              />
+            </>
+          )}
         </div>
       </main>
     </ToastProvider>
