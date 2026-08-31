@@ -100,6 +100,16 @@ function StatCard({ icon, label, value, unit, theme }) {
   );
 }
 
+function toFahrenheit(celsius) {
+  return Math.round((celsius * 9) / 5 + 32);
+}
+
+function overrideIconDayNight(iconCode, timeOfDay) {
+  const isNight = timeOfDay === "night" || timeOfDay === "sunset";
+  const base = iconCode.slice(0, -1);
+  return base + (isNight ? "n" : "d");
+}
+
 export default function WeatherCard({
   data,
   loading,
@@ -118,19 +128,12 @@ export default function WeatherCard({
   const { card, heading, muted, faint, divider } = theme;
   const isLight = timeOfDay === "day" || timeOfDay === "sunrise";
 
-  // Convert temperature based on unit
-  const displayTemp =
-    unit === "fahrenheit"
-      ? Math.round((currentTemp * 9) / 5 + 32)
-      : currentTemp;
-  const displayMax =
-    unit === "fahrenheit" ? Math.round((maxTemp * 9) / 5 + 32) : maxTemp;
-  const displayMin =
-    unit === "fahrenheit" ? Math.round((minTemp * 9) / 5 + 32) : minTemp;
+  const toDisplay = unit === "fahrenheit" ? toFahrenheit : (t) => t;
   const unitSymbol = unit === "fahrenheit" ? "°F" : "°C";
+  const displayIcon = overrideIconDayNight(iconCode, timeOfDay);
 
   return (
-    <div className="w-full max-w-md sm:max-w-lg lg:max-w-xl">
+    <div className="w-full max-w-2xl">
       <div
         className={`w-full rounded-3xl ${card} backdrop-blur-xl border shadow-2xl p-6 sm:p-8`}
       >
@@ -146,7 +149,7 @@ export default function WeatherCard({
             </p>
           </div>
           <div className="weather-icon-animate">
-            <WeatherIcons code={iconCode} size={64} />
+            <WeatherIcons code={displayIcon} size={64} />
           </div>
         </div>
 
@@ -155,7 +158,7 @@ export default function WeatherCard({
           <span
             className={`text-6xl sm:text-7xl lg:text-8xl font-bold leading-none ${heading}`}
           >
-            {displayTemp}
+            {toDisplay(currentTemp)}
           </span>
           <span className={`text-2xl sm:text-3xl font-bold mb-4 ${faint}`}>
             {unitSymbol}
@@ -191,14 +194,14 @@ export default function WeatherCard({
           <StatCard
             icon={<ChevronUpIcon />}
             label="العظمى"
-            value={displayMax}
+            value={toDisplay(maxTemp)}
             unit="°"
             theme={theme}
           />
           <StatCard
             icon={<ChevronDownIcon />}
             label="الصغرى"
-            value={displayMin}
+            value={toDisplay(minTemp)}
             unit="°"
             theme={theme}
           />

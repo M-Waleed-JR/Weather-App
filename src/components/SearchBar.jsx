@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useToast } from "../context/ToastContext.jsx";
 import { LocationIcon, SearchIcon } from "./Icons";
 
@@ -25,15 +25,21 @@ const SearchBar = ({ onSearch, timeOfDay }) => {
         locationBtn: "text-white/40 hover:text-sky-400",
       };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!city.trim()) return;
-    if (onSearch) {
-      onSearch(city.trim());
-    }
-  };
+  const handleSubmit = useCallback(
+    (e) => {
+      e.preventDefault();
+      const trimmed = city.trim();
+      if (!trimmed) return;
+      onSearch(trimmed);
+    },
+    [city, onSearch],
+  );
 
-  const handleGeolocation = () => {
+  const handleCityChange = useCallback((e) => {
+    setCity(e.target.value);
+  }, []);
+
+  const handleGeolocation = useCallback(() => {
     if (!navigator.geolocation) {
       showToastError("Geolocation is not supported by your browser");
       return;
@@ -45,9 +51,7 @@ const SearchBar = ({ onSearch, timeOfDay }) => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        if (onSearch) {
-          onSearch(`${latitude},${longitude}`);
-        }
+        onSearch(`${latitude},${longitude}`);
         setIsDetecting(false);
       },
       (error) => {
@@ -62,7 +66,7 @@ const SearchBar = ({ onSearch, timeOfDay }) => {
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
     );
-  };
+  }, [onSearch, showToastError, showToastInfo]);
 
   return (
     <div className="w-full max-w-md sm:max-w-lg lg:max-w-xl">
@@ -90,7 +94,7 @@ const SearchBar = ({ onSearch, timeOfDay }) => {
             aria-label="البحث عن مدينة"
             className={`h-full w-full bg-transparent pr-6 pl-14 text-base outline-none ${styles.input}`}
             value={city}
-            onChange={(e) => setCity(e.target.value)}
+            onChange={handleCityChange}
             disabled={isDetecting}
           />
           <button

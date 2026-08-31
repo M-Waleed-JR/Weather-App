@@ -10,33 +10,23 @@ import { useState, useCallback, useEffect } from "react";
 function App() {
   const { timeOfDay, handleThemeChange, themes, currentTheme } = useTheme();
   const [city, setCity] = useState("");
-  const [isGeoLoading, setIsGeoLoading] = useState(true);
-  const [unit, setUnit] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("weather-app-unit") || "celsius";
-    }
-    return "celsius";
-  });
+  const [unit, setUnit] = useState(() => localStorage.getItem("weather-app-unit") || "celsius");
 
   const { weatherData, isLoading, error } = useWeather(city, timeOfDay);
 
   useEffect(() => {
-    if (typeof window !== "undefined" && navigator.geolocation) {
+    if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
           setCity(`${latitude},${longitude}`);
-          setIsGeoLoading(false);
         },
         () => {
           setCity("cairo");
-          setIsGeoLoading(false);
         },
       );
     } else {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCity("cairo");
-      setIsGeoLoading(false);
     }
   }, []);
 
@@ -55,25 +45,25 @@ function App() {
   return (
     <ToastProvider>
       <main className="relative min-h-dvh overflow-hidden" dir="rtl">
-      <ThemeBackground timeOfDay={timeOfDay} />
-      <ThemeDebugger
-        onTimeChange={handleThemeChange}
-        themes={themes}
-        currentTheme={currentTheme}
-      />
-      <div className="relative z-10 mx-auto flex min-h-dvh w-full max-w-5xl flex-col items-center justify-center gap-10 px-6 py-8">
-        <SearchBar onSearch={handleSearch} timeOfDay={timeOfDay} />
-        <WeatherCard
-          data={weatherData}
-          loading={isLoading || isGeoLoading}
-          error={error}
-          timeOfDay={timeOfDay}
-          unit={unit}
-          onUnitToggle={handleUnitToggle}
+        <ThemeBackground timeOfDay={timeOfDay} />
+        <ThemeDebugger
+          onTimeChange={handleThemeChange}
+          themes={themes}
+          currentTheme={currentTheme}
         />
-      </div>
-    </main>
-  </ToastProvider>
+        <div className="relative z-10 mx-auto flex min-h-dvh w-full max-w-7xl flex-col items-center justify-center gap-10 px-4 sm:px-6 lg:px-8 py-8">
+          <SearchBar onSearch={handleSearch} timeOfDay={timeOfDay} />
+          <WeatherCard
+            data={weatherData}
+            loading={isLoading}
+            error={error}
+            timeOfDay={timeOfDay}
+            unit={unit}
+            onUnitToggle={handleUnitToggle}
+          />
+        </div>
+      </main>
+    </ToastProvider>
   );
 }
 
