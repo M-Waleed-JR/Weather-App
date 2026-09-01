@@ -10,6 +10,8 @@ const THEME_CONFIG = {
     skyGradient: "bg-gradient-to-b from-[#1e1b4b] via-[#c2410c] to-[#fde047]",
     vignette:
       "linear-gradient(180deg, rgba(15,23,42,0.3) 0%, rgba(15,23,42,0.05) 40%, rgba(15,23,42,0.25) 100%)",
+    backdropBlur: "backdrop-blur-[6px]",
+    overlayBg: "bg-black/10",
   },
   sunset: {
     video: "Themes/sunset.mp4",
@@ -20,6 +22,8 @@ const THEME_CONFIG = {
     skyGradient: "bg-gradient-to-b from-[#0f172a] via-[#831843] to-[#ea580c]",
     vignette:
       "linear-gradient(180deg, rgba(15,23,42,0.35) 0%, rgba(15,23,42,0.05) 40%, rgba(15,23,42,0.35) 100%)",
+    backdropBlur: "backdrop-blur-[6px]",
+    overlayBg: "bg-black/10",
   },
   day: {
     video: "Themes/Day.mp4",
@@ -30,6 +34,8 @@ const THEME_CONFIG = {
     skyGradient: "bg-gradient-to-b from-[#0284c7] via-[#38bdf8] to-[#bae6fd]",
     vignette:
       "linear-gradient(180deg, rgba(14,116,144,0.15) 0%, transparent 40%, rgba(14,116,144,0.15) 100%)",
+    backdropBlur: "backdrop-blur-[6px]",
+    overlayBg: "bg-black/10",
   },
   night: {
     video: "Themes/Night.mp4",
@@ -40,6 +46,8 @@ const THEME_CONFIG = {
     skyGradient: "bg-gradient-to-b from-[#020617] via-[#0f172a] to-[#1e1b4b]",
     vignette:
       "linear-gradient(180deg, rgba(2,6,23,0.4) 0%, rgba(2,6,23,0.1) 40%, rgba(2,6,23,0.45) 100%)",
+    backdropBlur: "backdrop-blur-none",
+    overlayBg: "bg-transparent",
   },
 };
 
@@ -91,14 +99,14 @@ export default function ThemeBackground({ timeOfDay }) {
   const vignetteLayer = useMemo(
     () => (
       <div
-        className="pointer-events-none absolute inset-0 backdrop-blur-[6px] bg-black/10 transition-all duration-1000 ease-out"
+        className={`pointer-events-none absolute inset-0 ${config.backdropBlur || "backdrop-blur-[6px]"} ${config.overlayBg || "bg-black/10"} transition-all duration-1000 ease-out`}
         style={{
           background: config.vignette,
         }}
         aria-hidden="true"
       />
     ),
-    [config.vignette],
+    [config.vignette, config.backdropBlur, config.overlayBg],
   );
 
   return (
