@@ -69,7 +69,7 @@ const SearchBar = ({ onSearch, timeOfDay }) => {
   }, [onSearch, showToastError, showToastInfo]);
 
   return (
-    <div className="w-full max-w-md sm:max-w-lg lg:max-w-xl">
+    <div className="w-full max-w-2xl">
       <form onSubmit={handleSubmit} className="relative group">
         <div
           className={`flex items-center h-14 w-full rounded-2xl border-2 backdrop-blur-md transition-all duration-300 focus-within:ring-4 ${styles.field}`}
