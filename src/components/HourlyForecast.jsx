@@ -52,7 +52,7 @@ function formatTime(timestamp) {
   const date = new Date(timestamp * 1000);
   let hours = date.getHours();
   const minutes = date.getMinutes().toString().padStart(2, "0");
-  const ampm = hours >= 12 ? 'PM' : 'AM';
+  const ampm = hours >= 12 ? "PM" : "AM";
   hours = hours % 12 || 12;
   return `${hours}:${minutes} ${ampm}`;
 }
@@ -70,7 +70,16 @@ function formatHour(timestamp) {
 }
 
 function getWindDirection(degrees) {
-  const directions = ["شمال", "شمال شرق", "شرق", "جنوب شرق", "جنوب", "جنوب غرب", "غرب", "شمال غرب"];
+  const directions = [
+    "شمال",
+    "شمال شرق",
+    "شرق",
+    "جنوب شرق",
+    "جنوب",
+    "جنوب غرب",
+    "غرب",
+    "شمال غرب",
+  ];
   const index = Math.round(degrees / 45) % 8;
   return directions[index];
 }
@@ -85,15 +94,33 @@ function isCurrentlyActive(time) {
 // Tab & Navigation Icons
 function SunIcon({ className = "w-5 h-5" }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+      />
     </svg>
   );
 }
 
 function WindIcon({ className = "w-5 h-5" }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M17.7 7.7a2.5 2.5 0 111.8 4.3H2" />
       <path d="M9.6 4.6A2 2 0 1111 8H2" />
       <path d="M12.6 19.4A2 2 0 1014 16H2" />
@@ -103,7 +130,15 @@ function WindIcon({ className = "w-5 h-5" }) {
 
 function DropletIcon({ className = "w-5 h-5" }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z" />
     </svg>
   );
@@ -111,7 +146,15 @@ function DropletIcon({ className = "w-5 h-5" }) {
 
 function RainIcon({ className = "w-5 h-5" }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M20 17.58A5 5 0 0018 8h-1.26A8 8 0 104 16.25" />
       <line x1="8" y1="16" x2="8.01" y2="21" />
       <line x1="12" y1="18" x2="12.01" y2="23" />
@@ -122,7 +165,13 @@ function RainIcon({ className = "w-5 h-5" }) {
 
 function ChevronLeftIcon({ className = "w-5 h-5" }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2.5}
+    >
       <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
     </svg>
   );
@@ -130,7 +179,13 @@ function ChevronLeftIcon({ className = "w-5 h-5" }) {
 
 function ChevronRightIcon({ className = "w-5 h-5" }) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+    <svg
+      className={className}
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2.5}
+    >
       <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
     </svg>
   );
@@ -143,7 +198,11 @@ const TAB_ICONS = {
   rain: RainIcon,
 };
 
-export default function HourlyForecast({ forecast, timeOfDay, unit = "celsius" }) {
+export default function HourlyForecast({
+  forecast,
+  timeOfDay,
+  unit = "celsius",
+}) {
   const [activeTab, setActiveTab] = useState("weather");
   const scrollRef = useRef(null);
   const isDragging = useRef(false);
@@ -152,9 +211,21 @@ export default function HourlyForecast({ forecast, timeOfDay, unit = "celsius" }
   const [isDraggingState, setIsDraggingState] = useState(false);
 
   const theme = getThemeClasses(timeOfDay);
-  const { card, heading, muted, faint, accent, activePill, activeTab: activeTabClass, inactiveTab, activeItem, activeItemRing, inactiveItem } = theme;
+  const {
+    card,
+    heading,
+    faint,
+    accent,
+    activePill,
+    activeTab: activeTabClass,
+    inactiveTab,
+    activeItem,
+    activeItemRing,
+    inactiveItem,
+  } = theme;
 
-  const toDisplay = unit === "fahrenheit" ? (t) => Math.round((t * 9) / 5 + 32) : (t) => t;
+  const toDisplay =
+    unit === "fahrenheit" ? (t) => Math.round((t * 9) / 5 + 32) : (t) => t;
 
   const displayForecast = useMemo(() => {
     if (!forecast || forecast.length === 0) return [];
@@ -224,23 +295,36 @@ export default function HourlyForecast({ forecast, timeOfDay, unit = "celsius" }
           : `${inactiveItem} hover:-translate-y-0.5 active:scale-95`
       }`}
     >
-      <span className={`text-xs font-medium mb-2 ${item.isActive ? "text-white" : faint}`}>
+      <span
+        className={`text-xs font-medium mb-2 ${item.isActive ? "text-white" : faint}`}
+      >
         {index === 0 ? "الآن" : item.hourLabel}
       </span>
-      <span className={`text-[10px] mb-3 ${item.isActive ? "text-white/70" : "text-slate-400"}`}>
+      <span
+        className={`text-[10px] mb-3 ${item.isActive ? "text-white/70" : "text-slate-400"}`}
+      >
         {item.timeLabel}
       </span>
       <div className={`mb-3 ${item.isActive ? "text-white" : accent}`}>
         {icon}
       </div>
-      <span className={`text-base font-bold ${item.isActive ? "text-white" : heading}`} dir="ltr">
+      <span
+        className={`text-base font-bold ${item.isActive ? "text-white" : heading}`}
+        dir="ltr"
+      >
         {value}
       </span>
       {subLabel && (
-        <span className={`text-[10px] ${item.isActive ? "text-white/70" : faint}`}>{subLabel}</span>
+        <span
+          className={`text-[10px] ${item.isActive ? "text-white/70" : faint}`}
+        >
+          {subLabel}
+        </span>
       )}
       {extraLabel && (
-        <span className={`text-[9px] mt-1 ${item.isActive ? "text-white/60" : "text-slate-500"}`}>
+        <span
+          className={`text-[9px] mt-1 ${item.isActive ? "text-white/60" : "text-slate-500"}`}
+        >
           {extraLabel}
         </span>
       )}
@@ -254,7 +338,9 @@ export default function HourlyForecast({ forecast, timeOfDay, unit = "celsius" }
         value: (
           <>
             {toDisplay(item.temp)}
-            <span className={`text-[10px] font-semibold align-top ${item.isActive ? "text-white/70" : "text-slate-400"}`}>
+            <span
+              className={`text-[10px] font-semibold align-top ${item.isActive ? "text-white/70" : "text-slate-400"}`}
+            >
               °{unit === "fahrenheit" ? "F" : "C"}
             </span>
           </>
@@ -262,7 +348,16 @@ export default function HourlyForecast({ forecast, timeOfDay, unit = "celsius" }
       }),
       wind: (item) => ({
         icon: <WindIcon className="w-8 h-8" />,
-        value: <>{item.windSpeed}<span className={`text-[10px] font-normal ml-0.5 ${item.isActive ? "text-white/70" : faint}`}>km/h</span></>,
+        value: (
+          <>
+            {item.windSpeed}
+            <span
+              className={`text-[10px] font-normal ml-0.5 ${item.isActive ? "text-white/70" : faint}`}
+            >
+              km/h
+            </span>
+          </>
+        ),
         extraLabel: item.windDirectionText,
       }),
       humidity: (item) => ({
@@ -291,10 +386,16 @@ export default function HourlyForecast({ forecast, timeOfDay, unit = "celsius" }
 
   return (
     <div className="w-full max-w-2xl">
-      <div className={`w-full rounded-3xl ${card} backdrop-blur-xl border shadow-2xl overflow-hidden`}>
+      <div
+        className={`w-full rounded-3xl ${card} backdrop-blur-xl border shadow-2xl overflow-hidden`}
+      >
         {/* Section Header with Pro Navigation Controls */}
-        <div className={`px-6 py-4 border-b flex items-center justify-between ${theme.cardInner}`}>
-          <h3 className={`text-lg font-bold ${heading}`}>توقعات الساعات القادمة</h3>
+        <div
+          className={`px-6 py-4 border-b flex items-center justify-between ${theme.cardInner}`}
+        >
+          <h3 className={`text-lg font-bold ${heading}`}>
+            توقعات الساعات القادمة
+          </h3>
           <div className="flex items-center gap-2">
             <button
               onClick={() => scrollByAmount(-240)}

@@ -86,7 +86,9 @@ const SearchBar = ({ onSearch, timeOfDay }) => {
               isDetecting ? "جاري تحديد الموقع..." : "استخدام موقعي الحالي"
             }
           >
-            <LocationIcon className={`w-5 h-5 ${isDetecting ? "animate-spin" : ""}`} />
+            <LocationIcon
+              className={`w-5 h-5 ${isDetecting ? "animate-spin" : ""}`}
+            />
           </button>
           <input
             type="search"

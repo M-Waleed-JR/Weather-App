@@ -1,0 +1,466 @@
+<title>Pro Temperature Chart Showcase</title>
+<style>
+:root {
+  --bg-primary: #fefefe;
+  --bg-secondary: #f8fafc;
+  --bg-card: rgba(255,255,255,0.85);
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --border-subtle: rgba(15,23,42,0.08);
+  --accent-warm: #f59e0b;
+  --accent-cool: #38bdf8;
+  --surface-ring: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-card: rgba(30,41,59,0.85);
+    --text-primary: #f1f5f9;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    --border-subtle: rgba(255,255,255,0.08);
+    --accent-warm: #fbbf24;
+    --accent-cool: #38bdf8;
+    --surface-ring: #0f172a;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-card: rgba(30,41,59,0.85);
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --border-subtle: rgba(255,255,255,0.08);
+  --accent-warm: #fbbf24;
+  --accent-cool: #38bdf8;
+  --surface-ring: #0f172a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  transition: all 0.2s ease;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.hero h1 {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  margin: 0 0 1rem 0;
+  background: linear-gradient(135deg, var(--accent-warm), var(--accent-cool));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-wrap: balance;
+}
+
+.hero p {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+  text-wrap: balance;
+}
+
+.comparison {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  margin-bottom: 4rem;
+}
+
+@media (min-width: 768px) {
+  .comparison {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.chart-section {
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 24px;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.chart-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-warm), var(--accent-cool));
+}
+
+.chart-section h2 {
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.chart-section p {
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+  font-size: 0.95rem;
+}
+
+.old-chart {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.improvements {
+  background: var(--bg-secondary);
+  border-radius: 16px;
+  padding: 2rem;
+  margin-top: 3rem;
+}
+
+.improvements h2 {
+  margin: 0 0 1.5rem 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.feature {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.feature h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--accent-warm);
+}
+
+.feature p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.badge {
+  display: inline-block;
+  background: rgba(245,158,11,0.1);
+  color: var(--accent-warm);
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.old-badge {
+  background: rgba(107,114,128,0.1);
+  color: var(--text-muted);
+}
+
+/* Chart simulation styles */
+.mock-chart {
+  width: 100%;
+  height: 140px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.mock-old-chart {
+  background: linear-gradient(45deg, rgba(59,130,246,0.1) 0%, rgba(239,68,68,0.1) 100%);
+  border: 1px solid var(--border-subtle);
+}
+
+.mock-new-chart {
+  background: linear-gradient(to bottom,
+    rgba(251,191,36,0.15) 0%,
+    rgba(251,191,36,0.0) 100%
+  );
+  border: 1px solid var(--border-subtle);
+  position: relative;
+}
+
+.mock-line {
+  position: absolute;
+  top: 40%;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: var(--accent-warm);
+  border-radius: 1px;
+  transform: translateY(-50%);
+}
+
+.mock-dots {
+  position: absolute;
+  top: 40%;
+  left: 15%;
+  right: 15%;
+  display: flex;
+  justify-content: space-between;
+  transform: translateY(-50%);
+}
+
+.mock-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--accent-warm);
+  border: 2px solid var(--surface-ring);
+  border-radius: 50%;
+}
+
+.theme-toggle {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 50px;
+  padding: 0.75rem 1.25rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  backdrop-filter: blur(20px);
+  transition: all 0.2s ease;
+  z-index: 100;
+}
+
+.theme-toggle:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 768px) {
+  .theme-toggle {
+    top: 1rem;
+    right: 1rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+  }
+}
+
+.code-block {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+  font-family: 'SF Mono', Consolas, monospace;
+  font-size: 0.875rem;
+  overflow-x: auto;
+  color: var(--text-secondary);
+}
+</style>
+
+<button class="theme-toggle" onclick="toggleTheme()">
+  🌓 Toggle Theme
+</button>
+
+<div class="container">
+  <div class="hero">
+    <h1>Pro Temperature Charts</h1>
+    <p>From basic visualization to professional-grade data presentation with impeccable UX principles and data visualization best practices.</p>
+  </div>
+
+  <div class="comparison">
+    <div class="chart-section">
+      <h2>
+        📊 Before
+        <span class="badge old-badge">Basic</span>
+      </h2>
+      <p>Simple line chart with basic interactivity and limited visual hierarchy</p>
+
+      <div class="old-chart">
+        <div class="mock-chart mock-old-chart">
+          <div class="mock-line" style="background: #6366f1;"></div>
+          <div class="mock-dots">
+            <div class="mock-dot" style="background: #6366f1; border-color: var(--bg-primary);"></div>
+            <div class="mock-dot" style="background: #6366f1; border-color: var(--bg-primary);"></div>
+            <div class="mock-dot" style="background: #6366f1; border-color: var(--bg-primary);"></div>
+            <div class="mock-dot" style="background: #6366f1; border-color: var(--bg-primary);"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+// Basic implementation
+&lt;path d={simplePath}
+      stroke="blue"
+      strokeWidth="2"/&gt;
+      </div>
+    </div>
+
+    <div class="chart-section">
+      <h2>
+        ✨ After
+        <span class="badge">Pro-Level</span>
+      </h2>
+      <p>Advanced data visualization with Catmull-Rom curves, semantic colors, Y-axis labels, and rich interactions</p>
+
+      <div class="mock-chart mock-new-chart">
+        <div class="mock-line"></div>
+        <div class="mock-dots">
+          <div class="mock-dot"></div>
+          <div class="mock-dot" style="transform: scale(1.2); box-shadow: 0 0 8px rgba(245,158,11,0.4);"></div>
+          <div class="mock-dot"></div>
+          <div class="mock-dot"></div>
+        </div>
+        <!-- Simulated Y-axis labels -->
+        <div style="position: absolute; left: 8px; top: 20%; font-size: 10px; color: var(--text-muted);">25°</div>
+        <div style="position: absolute; left: 8px; top: 50%; font-size: 10px; color: var(--text-muted);">20°</div>
+        <div style="position: absolute; left: 8px; top: 80%; font-size: 10px; color: var(--text-muted);">15°</div>
+      </div>
+
+      <div class="code-block">
+// Professional implementation
+const lPath = catmullRomPath(pts, 0.4);
+&lt;path d={lPath}
+      stroke={pal.line}
+      filter="url(#tcLineGlow)"/&gt;
+      </div>
+    </div>
+  </div>
+
+  <div class="improvements">
+    <h2>🏆 Professional Enhancements</h2>
+
+    <div class="feature-grid">
+      <div class="feature">
+        <h3>Catmull-Rom Splines</h3>
+        <p>Smooth, data-faithful curves that maintain mathematical precision while appearing natural and readable.</p>
+      </div>
+
+      <div class="feature">
+        <h3>Semantic Color System</h3>
+        <p>Theme-aware palette with warm/cool temperature encoding and proper contrast ratios for accessibility.</p>
+      </div>
+
+      <div class="feature">
+        <h3>Y-Axis Labels</h3>
+        <p>Tabular number formatting and strategic grid placement for instant temperature range comprehension.</p>
+      </div>
+
+      <div class="feature">
+        <h3>Rich Hover States</h3>
+        <p>Crosshair tracking, surface rings for separation, and contextual tooltips with max/min indicators.</p>
+      </div>
+
+      <div class="feature">
+        <h3>Inline Data Badges</h3>
+        <p>Max/min temperatures called out directly on the chart with semantic color coding and clear visual hierarchy.</p>
+      </div>
+
+      <div class="feature">
+        <h3>Performance Optimized</h3>
+        <p>Efficient pointer tracking with distance-based snapping and memoized calculations for smooth 60fps interaction.</p>
+      </div>
+
+      <div class="feature">
+        <h3>Accessibility First</h3>
+        <p>ARIA labels, keyboard navigation support, and 4.5:1+ contrast ratios throughout all theme variations.</p>
+      </div>
+
+      <div class="feature">
+        <h3>Production Ready</h3>
+        <p>Error boundaries, edge case handling, and responsive design that works across all device sizes and orientations.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleTheme() {
+  const root = document.documentElement;
+  const currentTheme = root.getAttribute('data-theme');
+
+  if (currentTheme === 'dark') {
+    root.setAttribute('data-theme', 'light');
+  } else {
+    root.setAttribute('data-theme', 'dark');
+  }
+}
+
+// Add subtle animation on page load
+document.addEventListener('DOMContentLoaded', () => {
+  const elements = document.querySelectorAll('.chart-section, .feature');
+  elements.forEach((el, i) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+
+    setTimeout(() => {
+      el.style.transition = 'all 0.6s ease';
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0)';
+    }, i * 100);
+  });
+});
+
+// Simulate chart interaction
+document.querySelectorAll('.mock-new-chart').forEach(chart => {
+  chart.addEventListener('mousemove', (e) => {
+    const dots = chart.querySelectorAll('.mock-dot');
+    const rect = chart.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const closestIndex = Math.round(x * (dots.length - 1));
+
+    dots.forEach((dot, i) => {
+      if (i === closestIndex) {
+        dot.style.transform = 'scale(1.3)';
+        dot.style.boxShadow = '0 0 12px rgba(245,158,11,0.6)';
+      } else {
+        dot.style.transform = 'scale(1)';
+        dot.style.boxShadow = 'none';
+      }
+    });
+  });
+
+  chart.addEventListener('mouseleave', () => {
+    const dots = chart.querySelectorAll('.mock-dot');
+    dots.forEach(dot => {
+      dot.style.transform = 'scale(1)';
+      dot.style.boxShadow = 'none';
+    });
+  });
+});
+</script>

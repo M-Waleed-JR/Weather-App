@@ -12,13 +12,14 @@ import { useState, useCallback, useEffect } from "react";
 
 function App() {
   const { timeOfDay, handleThemeChange, themes, currentTheme } = useTheme();
-  const [city, setCity] = useState("");
+  const [city, setCity] = useState("cairo");
   const [unit, setUnit] = useState(
     () => localStorage.getItem("weather-app-unit") || "celsius",
   );
 
-  const { weatherData, isLoading, error } = useWeather(city, timeOfDay);
+  const { weatherData, isLoading, error } = useWeather(city);
 
+  // Initialize with geolocation on mount
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -27,11 +28,10 @@ function App() {
           setCity(`${latitude},${longitude}`);
         },
         () => {
+          // Fallback to Cairo if geolocation fails
           setCity("cairo");
         },
       );
-    } else {
-      setCity("cairo");
     }
   }, []);
 
