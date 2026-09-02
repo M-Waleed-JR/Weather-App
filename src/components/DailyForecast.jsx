@@ -194,11 +194,11 @@ export default function DailyForecast({
           className={`px-6 py-4 border-b flex items-center justify-between ${cardInner}`}
         >
           <div className="flex items-center gap-2">
-            <h3 className={`text-lg font-bold ${heading}`}>
+            <h3 className={`text-lg sm:text-xl font-bold ${heading}`}>
               توقعات الأيام القادمة
             </h3>
             <span
-              className={`text-xs px-2.5 py-1 rounded-full bg-white/10 font-semibold ${muted}`}
+              className={`text-xs sm:text-sm px-3 py-1 rounded-full bg-white/10 font-bold ${muted}`}
             >
               5 أيام
             </span>
@@ -224,7 +224,7 @@ export default function DailyForecast({
         </div>
 
         {/* Scrollable Cards Slider */}
-        <div className="relative group/slider p-4 border-b border-white/5">
+        <div className="relative group/slider p-4 sm:p-5 border-b border-white/5">
           {/* Floating Hover Arrows */}
           <button
             onClick={() => scrollByAmount(-220)}
@@ -269,7 +269,7 @@ export default function DailyForecast({
                 <button
                   key={day.date || index}
                   onClick={() => setActiveDay(index)}
-                  className={`flex-shrink-0 flex flex-col items-center justify-between min-w-[130px] p-4 rounded-2xl border transition-all duration-300 ${
+                  className={`flex-shrink-0 flex flex-col items-center justify-between min-w-[135px] sm:min-w-[150px] p-4 sm:p-5 rounded-2xl border transition-all duration-300 ${
                     isActive
                       ? `${activeItem} scale-[1.02] shadow-xl`
                       : `${inactiveItem} hover:-translate-y-0.5 active:scale-95`
@@ -278,12 +278,12 @@ export default function DailyForecast({
                   {/* Top Labels */}
                   <div className="text-center mb-2">
                     <span
-                      className={`block text-sm font-bold ${isActive ? "text-white" : heading}`}
+                      className={`block text-sm sm:text-base font-bold ${isActive ? "text-white" : heading}`}
                     >
                       {dayTitle}
                     </span>
                     <span
-                      className={`text-[11px] font-medium ${isActive ? "text-white/70" : faint}`}
+                      className={`text-xs font-medium ${isActive ? "text-white/70" : faint}`}
                     >
                       {dateSubtitle}
                     </span>
@@ -291,13 +291,13 @@ export default function DailyForecast({
 
                   {/* Weather Icon */}
                   <div className="my-2 transition-transform duration-300 hover:scale-110">
-                    <WeatherIcons code={icon} size={42} />
+                    <WeatherIcons code={icon} size={46} />
                   </div>
 
                   {/* Temperature Range & Bar */}
                   <div className="w-full mt-2">
                     <div
-                      className="flex items-center justify-between text-xs font-bold mb-1.5"
+                      className="flex items-center justify-between text-xs sm:text-sm font-bold mb-1.5"
                       dir="ltr"
                     >
                       <span className={isActive ? "text-white" : heading}>
@@ -310,7 +310,7 @@ export default function DailyForecast({
 
                     {/* Pro Temperature Range Bar */}
                     <div
-                      className={`relative h-1.5 w-full rounded-full overflow-hidden ${barTrack}`}
+                      className={`relative h-2 w-full rounded-full overflow-hidden ${barTrack}`}
                     >
                       <div
                         className={`absolute top-0 bottom-0 rounded-full bg-gradient-to-r ${tempBar}`}
@@ -328,30 +328,30 @@ export default function DailyForecast({
         </div>
 
         {/* Selected Day Detailed Breakdown & Temperature Curve */}
-        <div className={`p-6 ${cardInner}`}>
-          <div className="flex items-center justify-between mb-4">
+        <div className={`p-5 sm:p-7 ${cardInner}`}>
+          <div className="flex items-center justify-between mb-5">
             <div>
               <span
-                className={`text-xs font-semibold uppercase tracking-wider ${faint}`}
+                className={`text-xs sm:text-sm font-bold uppercase tracking-wider ${faint}`}
               >
                 تفاصيل اليوم
               </span>
-              <h4 className={`text-lg font-bold ${heading}`}>
+              <h4 className={`text-lg sm:text-xl font-extrabold ${heading}`}>
                 {formatDayName(activeDayData.date, activeDay)} -{" "}
                 {formatDateSub(activeDayData.date)}
               </h4>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 sm:gap-4">
               <WeatherIcons
                 code={overrideIconDayNight(activeDayData.iconCode, timeOfDay)}
-                size={48}
+                size={54}
               />
               <div className="text-left" dir="ltr">
-                <span className={`text-2xl font-extrabold ${heading}`}>
+                <span className={`text-2xl sm:text-3xl font-extrabold ${heading}`}>
                   {toDisplay(activeDayData.maxTemp)}
                   {unitSymbol}
                 </span>
-                <span className={`block text-xs font-medium ${faint}`}>
+                <span className={`block text-xs sm:text-sm font-semibold ${faint}`}>
                   الصغرى: {toDisplay(activeDayData.minTemp)}
                   {unitSymbol}
                 </span>
@@ -362,16 +362,16 @@ export default function DailyForecast({
           {/* Temperature Chart */}
           {activeDayData.hourly && activeDayData.hourly.length > 0 && (
             <div className="mt-4 pt-4 border-t border-white/10">
-              <div className="mb-3 flex items-center justify-between flex-wrap gap-2">
+              <div className="mb-4 flex items-center justify-between flex-wrap gap-2">
                 <span
-                  className={`text-xs font-bold ${muted} flex items-center gap-1.5`}
+                  className={`text-sm sm:text-base font-bold ${muted} flex items-center gap-2`}
                 >
                   <svg
-                    className="w-4 h-4 text-amber-400"
+                    className="w-5 h-5 text-amber-400"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
-                    strokeWidth={2}
+                    strokeWidth={2.5}
                   >
                     <path
                       strokeLinecap="round"
@@ -384,10 +384,10 @@ export default function DailyForecast({
 
                 {/* Visual Top & Min Temp Summary Pills */}
                 <div
-                  className="flex items-center gap-2 text-xs font-bold"
+                  className="flex items-center gap-2.5 text-xs sm:text-sm font-extrabold"
                   dir="ltr"
                 >
-                  <span className="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1">
+                  <span className="px-3 py-1.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1.5 shadow-sm">
                     <span>🔥 الأعلى:</span>
                     <span>
                       {toDisplay(
@@ -396,7 +396,7 @@ export default function DailyForecast({
                       {unitSymbol}
                     </span>
                   </span>
-                  <span className="px-2.5 py-1 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/30 flex items-center gap-1">
+                  <span className="px-3 py-1.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/30 flex items-center gap-1.5 shadow-sm">
                     <span>❄️ الأدنى:</span>
                     <span>
                       {toDisplay(
@@ -408,32 +408,31 @@ export default function DailyForecast({
                 </div>
               </div>
 
-              <div className="relative w-full my-2">
+              {/* Large Responsive Temperature Chart */}
+              <div className="relative w-full my-3">
                 <TemperatureChart
                   data={activeDayData.hourly}
-                  width={600}
-                  height={160}
                   unit={unit}
                   timeOfDay={timeOfDay}
                 />
               </div>
 
               {/* Clean Non-overlapping Hourly Strip */}
-              <div className="flex justify-between items-center overflow-x-auto scrollbar-hide gap-2 pt-2">
+              <div className="flex justify-between items-center overflow-x-auto scrollbar-hide gap-2 sm:gap-3 pt-3">
                 {activeDayData.hourly.map((h, i) => (
                   <div
                     key={i}
-                    className="flex flex-col items-center min-w-[50px] p-1.5 rounded-xl bg-white/5 border border-white/5"
+                    className="flex flex-col items-center min-w-[55px] sm:min-w-[65px] p-2 sm:p-2.5 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
                   >
-                    <span className={`text-[10px] font-medium mb-1 ${faint}`}>
+                    <span className={`text-xs font-semibold mb-1 ${faint}`}>
                       {formatTime(h.time)}
                     </span>
                     <WeatherIcons
                       code={overrideIconDayNight(h.iconCode, timeOfDay)}
-                      size={22}
+                      size={26}
                     />
                     <span
-                      className={`text-xs font-bold mt-1 ${heading}`}
+                      className={`text-xs sm:text-sm font-extrabold mt-1.5 ${heading}`}
                       dir="ltr"
                     >
                       {toDisplay(h.temp)}°
