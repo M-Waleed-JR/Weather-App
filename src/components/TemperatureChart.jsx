@@ -158,7 +158,7 @@ export default function TemperatureChart({
       return {
         points: [], linePath: "", areaPath: "",
         minTemp: 0, maxTemp: 0, maxIdx: -1, minIdx: -1,
-        gridYs: [], pTop: 52, pBot: 42, pLeft: 56, pRight: 28,
+        gridYs: [], pTop: 32, pBot: 24, pLeft: 36, pRight: 16,
       };
     }
 
@@ -166,17 +166,17 @@ export default function TemperatureChart({
     const rawMin = Math.min(...temps);
     const rawMax = Math.max(...temps);
 
-    // Dynamic padding so top/bottom badges and labels fit comfortably
+    // Domain padding so curve never clips top/bottom
     const rawRange = rawMax - rawMin || 4;
-    const pad = Math.max(rawRange * 0.25, 2.5);
+    const pad = Math.max(rawRange * 0.22, 2);
     const domainMin = rawMin - pad;
     const domainMax = rawMax + pad;
     const domain = domainMax - domainMin;
 
-    const pLeft = 56;  // ample space for Y-axis labels
-    const pRight = 28;
-    const pTop = 52;   // space for max peak badge & point labels
-    const pBot = 42;   // space for time & min valley badge
+    const pLeft = 36;   // space for Y-axis labels
+    const pRight = 16;
+    const pTop = 32;    // space for top peak badge
+    const pBot = 24;    // space for bottom valley badge
 
     const chartW = Math.max(width - pLeft - pRight, 10);
     const chartH = Math.max(height - pTop - pBot, 10);
@@ -199,19 +199,13 @@ export default function TemperatureChart({
     const maxIdx = temps.indexOf(rawMax);
     const minIdx = temps.indexOf(rawMin);
 
-    // 4 horizontal grid lines for clear reading
-    const stepCount = 3;
-    const tempStep = (rawMax - rawMin) / stepCount;
-    const gridValues = Array.from({ length: stepCount + 1 }, (_, i) =>
-      Math.round(rawMax - i * tempStep)
-    );
+    // 3 horizontal grid lines: max, mid, min
+    const midTemp = Math.round((rawMin + rawMax) / 2);
+    const gridValues = Array.from(new Set([rawMax, midTemp, rawMin]));
 
-    // Deduplicate grid values
-    const uniqueGridValues = Array.from(new Set(gridValues));
-
-    const gridYs = uniqueGridValues.map((t) => ({
+    const gridYs = gridValues.map((t) => ({
       y: pTop + chartH - ((t - domainMin) / domain) * chartH,
-      label: `${t}${unitSymbol}`,
+      label: `${t}°`,
     }));
 
     return {
@@ -228,7 +222,7 @@ export default function TemperatureChart({
       pLeft,
       pRight,
     };
-  }, [data, width, height, toDisplay, unitSymbol]);
+  }, [data, width, height, toDisplay]);
 
   // Snap crosshair to nearest point via pointer position
   const handlePointerMove = useCallback(
@@ -256,13 +250,13 @@ export default function TemperatureChart({
 
   // Keep tooltip within SVG horizontal bounds
   const tooltipLeft = hp
-    ? Math.min(Math.max((hp.x / width) * 100, 14), 86)
+    ? Math.min(Math.max((hp.x / width) * 100, 12), 88)
     : 50;
 
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-[280px] sm:h-[340px] md:h-[380px] select-none touch-none"
+      className="relative w-full h-[160px] sm:h-[190px] md:h-[210px] select-none"
       aria-hidden="false"
     >
       <svg
@@ -286,7 +280,7 @@ export default function TemperatureChart({
 
           {/* Line glow filter */}
           <filter id="tcLineGlow" x="-20%" y="-40%" width="140%" height="180%">
-            <feGaussianBlur stdDeviation="4" result="blur" />
+            <feGaussianBlur stdDeviation="3" result="blur" />
             <feMerge>
               <feMergeNode in="blur" />
               <feMergeNode in="SourceGraphic" />
@@ -295,7 +289,7 @@ export default function TemperatureChart({
 
           {/* Dot highlight glow */}
           <filter id="tcDotGlow" x="-60%" y="-60%" width="220%" height="220%">
-            <feGaussianBlur stdDeviation="4" result="blur" />
+            <feGaussianBlur stdDeviation="3" result="blur" />
             <feMerge>
               <feMergeNode in="blur" />
               <feMergeNode in="SourceGraphic" />
@@ -317,15 +311,15 @@ export default function TemperatureChart({
               x2={width - pRight}
               y2={g.y}
               stroke={pal.gridStroke}
-              strokeWidth="1.5"
-              strokeDasharray="4 4"
+              strokeWidth="1"
+              strokeDasharray="3 3"
             />
             <text
-              x={pLeft - 10}
+              x={pLeft - 6}
               y={g.y + 4}
               textAnchor="end"
               fill={pal.labelFg}
-              fontSize="12"
+              fontSize="11"
               fontWeight="600"
               fontFamily="system-ui, -apple-system, sans-serif"
               style={{ fontVariantNumeric: "tabular-nums" }}
@@ -347,25 +341,25 @@ export default function TemperatureChart({
           d={linePath}
           fill="none"
           stroke={pal.line}
-          strokeWidth="3.5"
+          strokeWidth="3"
           strokeLinecap="round"
           strokeLinejoin="round"
           filter="url(#tcLineGlow)"
         />
 
-        {/* ── Data point markers & inline temperature values ─────────────────────────── */}
+        {/* ── Data point markers ─────────────────────────── */}
         {points.map((pt, i) => {
           const hov = hoveredIndex === i;
           const isMaxPt = i === maxIdx;
           const isMinPt = i === minIdx;
           const dotColor = isMaxPt ? pal.maxDot : isMinPt ? pal.minDot : pal.dotFill;
-          const ringR = hov ? 9 : isMaxPt || isMinPt ? 8 : 6;
-          const coreR = hov ? 5.5 : isMaxPt || isMinPt ? 4.5 : 3.5;
+          const ringR = hov ? 8 : isMaxPt || isMinPt ? 7 : 5;
+          const coreR = hov ? 5 : isMaxPt || isMinPt ? 4 : 3;
 
           return (
             <g key={i}>
               {/* Touch/mouse hover target */}
-              <circle cx={pt.x} cy={pt.y} r={18} fill="transparent" />
+              <circle cx={pt.x} cy={pt.y} r={16} fill="transparent" />
 
               {/* Surface ring */}
               <circle
@@ -383,26 +377,6 @@ export default function TemperatureChart({
                 r={coreR}
                 fill={dotColor}
               />
-
-              {/* Directly visible temperature value above/below point for instant readability */}
-              {!isMaxPt && !isMinPt && (
-                <text
-                  x={pt.x}
-                  y={pt.y - 12}
-                  textAnchor="middle"
-                  fill={pal.pointLabelFg}
-                  fontSize="12"
-                  fontWeight="700"
-                  fontFamily="system-ui, sans-serif"
-                  style={{
-                    textShadow: isLight
-                      ? "0 1px 3px rgba(255,255,255,0.9), 0 0 2px rgba(255,255,255,1)"
-                      : "0 1px 3px rgba(0,0,0,0.9), 0 0 2px rgba(0,0,0,1)",
-                  }}
-                >
-                  {pt.displayTemp}°
-                </text>
-              )}
             </g>
           );
         })}
@@ -410,28 +384,28 @@ export default function TemperatureChart({
         {/* ── Max Peak inline badge ─────────────────────── */}
         {points.length > 0 && maxIdx >= 0 && (() => {
           const pt = points[maxIdx];
-          const badgeW = 58;
-          const badgeH = 24;
+          const badgeW = 48;
+          const badgeH = 20;
           return (
-            <g transform={`translate(${pt.x - badgeW / 2}, ${pt.y - 38})`}>
+            <g transform={`translate(${Math.min(Math.max(pt.x - badgeW / 2, pLeft), width - pRight - badgeW)}, ${pt.y - 26})`}>
               <rect
                 width={badgeW}
                 height={badgeH}
-                rx={12}
+                rx={10}
                 fill={pal.maxBg}
                 stroke={pal.maxBorder}
-                strokeWidth="1.5"
+                strokeWidth="1"
               />
               <text
                 x={badgeW / 2}
-                y={16}
+                y={14}
                 textAnchor="middle"
                 fill={pal.maxDot}
-                fontSize="12"
-                fontWeight="800"
+                fontSize="11"
+                fontWeight="700"
                 fontFamily="system-ui, sans-serif"
               >
-                🔥 {maxTemp}{unitSymbol}
+                {maxTemp}{unitSymbol}
               </text>
             </g>
           );
@@ -440,28 +414,28 @@ export default function TemperatureChart({
         {/* ── Min Valley inline badge ─────────────────────── */}
         {points.length > 0 && minIdx >= 0 && minIdx !== maxIdx && (() => {
           const pt = points[minIdx];
-          const badgeW = 58;
-          const badgeH = 24;
+          const badgeW = 48;
+          const badgeH = 20;
           return (
-            <g transform={`translate(${pt.x - badgeW / 2}, ${pt.y + 16})`}>
+            <g transform={`translate(${Math.min(Math.max(pt.x - badgeW / 2, pLeft), width - pRight - badgeW)}, ${pt.y + 10})`}>
               <rect
                 width={badgeW}
                 height={badgeH}
-                rx={12}
+                rx={10}
                 fill={pal.minBg}
                 stroke={pal.minBorder}
-                strokeWidth="1.5"
+                strokeWidth="1"
               />
               <text
                 x={badgeW / 2}
-                y={16}
+                y={14}
                 textAnchor="middle"
                 fill={pal.minDot}
-                fontSize="12"
-                fontWeight="800"
+                fontSize="11"
+                fontWeight="700"
                 fontFamily="system-ui, sans-serif"
               >
-                ❄️ {minTemp}{unitSymbol}
+                {minTemp}{unitSymbol}
               </text>
             </g>
           );
@@ -476,8 +450,8 @@ export default function TemperatureChart({
             y2={height - pBot}
             stroke={pal.crosshair}
             strokeWidth="1.5"
-            strokeDasharray="4 4"
-            opacity="0.75"
+            strokeDasharray="3 3"
+            opacity="0.6"
             pointerEvents="none"
           />
         )}
@@ -490,25 +464,24 @@ export default function TemperatureChart({
           style={{
             left: `${tooltipLeft}%`,
             top: `${(hp.y / height) * 100}%`,
-            transform: "translate(-50%, -125%)",
+            transform: "translate(-50%, -120%)",
           }}
         >
           <div
-            className="flex items-center gap-2.5 px-3.5 py-2 rounded-2xl text-sm font-bold shadow-2xl backdrop-blur-xl"
+            className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-xs font-bold shadow-2xl backdrop-blur-xl"
             style={{
               background: pal.tooltipBg,
               border: `1px solid ${pal.tooltipBorder}`,
               color: pal.tooltipFg,
             }}
           >
-            {/* Colored identity dot */}
             <span
-              className="w-2 h-2 rounded-full flex-shrink-0"
+              className="w-1.5 h-1.5 rounded-full flex-shrink-0"
               style={{ background: pal.tooltipAccent }}
             />
             <span style={{ color: pal.tooltipMuted }}>{formatTime(hp.time)}</span>
             <span
-              className="text-base font-extrabold tabular-nums"
+              className="font-bold tabular-nums"
               style={{ color: pal.tooltipAccent }}
               dir="ltr"
             >
@@ -516,24 +489,24 @@ export default function TemperatureChart({
             </span>
             {isMax && (
               <span
-                className="px-2 py-0.5 rounded-lg text-xs font-extrabold"
-                style={{ background: "rgba(239,68,68,0.25)", color: pal.maxDot }}
+                className="px-1.5 py-0.5 rounded-md text-[10px] font-bold"
+                style={{ background: "rgba(239,68,68,0.2)", color: pal.maxDot }}
               >
-                ↑ الأعلى
+                ↑ أعلى
               </span>
             )}
             {isMin && !isMax && (
               <span
-                className="px-2 py-0.5 rounded-lg text-xs font-extrabold"
-                style={{ background: "rgba(56,189,248,0.25)", color: pal.minDot }}
+                className="px-1.5 py-0.5 rounded-md text-[10px] font-bold"
+                style={{ background: "rgba(56,189,248,0.2)", color: pal.minDot }}
               >
-                ↓ الأدنى
+                ↓ أدنى
               </span>
             )}
           </div>
           {/* Arrow */}
           <div
-            className="mx-auto w-2.5 h-2"
+            className="mx-auto w-2 h-1.5"
             style={{
               background: pal.tooltipBg,
               clipPath: "polygon(0 0, 100% 0, 50% 100%)",
