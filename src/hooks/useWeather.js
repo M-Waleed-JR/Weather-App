@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import { getCitySearchCandidates } from "../utils/citySearch";
 
 const API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
 const MAX_RETRIES = 3;
@@ -33,12 +34,31 @@ export function useWeather(city) {
         if (signal.aborted) return;
 
         try {
-          const isCoordinates = /^-?\d+\.?\d*,-?\d+\.?\d*$/.test(city.trim());
-          const url = isCoordinates
-            ? `https://api.openweathermap.org/data/2.5/forecast?lat=${city.split(",")[0]}&lon=${city.split(",")[1]}&appid=${API_KEY}&units=metric&lang=ar`
-            : `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric&lang=ar`;
+          const query = city.trim();
+          const isCoordinates = /^-?\d+\.?\d*\s*,\s*-?\d+\.?\d*$/.test(query);
+          const [latitude, longitude] = query.split(",").map((value) => value.trim());
+          const searchCandidates = isCoordinates
+            ? [null]
+            : getCitySearchCandidates(query);
+          let res;
+          let lastError;
 
-          const res = await axios.get(url, { signal });
+          for (const candidate of searchCandidates) {
+            try {
+              res = await axios.get("https://api.openweathermap.org/data/2.5/forecast", {
+                signal,
+                params: isCoordinates
+                  ? { lat: latitude, lon: longitude, appid: API_KEY, units: "metric", lang: "ar" }
+                  : { q: candidate, appid: API_KEY, units: "metric", lang: "ar" },
+              });
+              break;
+            } catch (requestError) {
+              lastError = requestError;
+              if (requestError.response?.status !== 404 || signal.aborted) throw requestError;
+            }
+          }
+
+          if (!res) throw lastError;
 
           const cityName = res.data.city.name;
           const currentTemp = Math.round(res.data.list[0].main.temp);
@@ -124,8 +144,13 @@ export function useWeather(city) {
           if (signal.aborted) return;
 
           const isLastAttempt = attempt === MAX_RETRIES;
+          if (err.response?.status === 404) {
+            setError("city-not-found");
+            setIsLoading(false);
+            return;
+          }
           if (isLastAttempt || err.name === "CanceledError") {
-            setError("تعذر تحميل بيانات الطقس");
+            setError("weather-unavailable");
             setIsLoading(false);
           } else {
             await new Promise((resolve) =>

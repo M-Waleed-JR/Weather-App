@@ -1,10 +1,11 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { useToast } from "../context/ToastContext.jsx";
 import { LocationIcon, SearchIcon } from "./Icons";
 
 const SearchBar = ({ onSearch, timeOfDay }) => {
   const [city, setCity] = useState("");
   const [isDetecting, setIsDetecting] = useState(false);
+  const locationRequestId = useRef(0);
   const { error: showToastError, info: showToastInfo } = useToast();
 
   const isLight = timeOfDay === "day" || timeOfDay === "sunrise";
@@ -30,6 +31,8 @@ const SearchBar = ({ onSearch, timeOfDay }) => {
       e.preventDefault();
       const trimmed = city.trim();
       if (!trimmed) return;
+      locationRequestId.current += 1;
+      setIsDetecting(false);
       onSearch(trimmed);
     },
     [city, onSearch],
@@ -45,16 +48,24 @@ const SearchBar = ({ onSearch, timeOfDay }) => {
       return;
     }
 
+    const requestId = locationRequestId.current + 1;
+    locationRequestId.current = requestId;
     setIsDetecting(true);
     showToastInfo("جاري تحديد موقعك...");
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        if (requestId !== locationRequestId.current) return;
         const { latitude, longitude } = position.coords;
+        localStorage.setItem(
+          "weather-app-last-location",
+          JSON.stringify({ latitude, longitude }),
+        );
         onSearch(`${latitude},${longitude}`);
         setIsDetecting(false);
       },
       (error) => {
+        if (requestId !== locationRequestId.current) return;
         let message = "Unable to retrieve your location";
         if (error.code === error.PERMISSION_DENIED) {
           message = "Location permission was denied. Please search manually.";
@@ -64,7 +75,8 @@ const SearchBar = ({ onSearch, timeOfDay }) => {
         showToastError(message);
         setIsDetecting(false);
       },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
+      // Network-based positions are faster and more reliable on desktops than GPS.
+      { enableHighAccuracy: false, timeout: 20000, maximumAge: 300000 },
     );
   }, [onSearch, showToastError, showToastInfo]);
 
@@ -92,18 +104,16 @@ const SearchBar = ({ onSearch, timeOfDay }) => {
           </button>
           <input
             type="search"
-            placeholder="ابحث عن مدينة..."
+            placeholder="ابحث عن مدينة بالعربية أو الإنجليزية..."
             aria-label="البحث عن مدينة"
             className={`h-full w-full bg-transparent pr-6 pl-14 text-base outline-none ${styles.input}`}
             value={city}
             onChange={handleCityChange}
-            disabled={isDetecting}
           />
           <button
             type="submit"
             className={`absolute left-3 p-2.5 rounded-xl transition-all duration-200 hover:scale-110 active:scale-95 ${styles.icon}`}
             aria-label="بحث"
-            disabled={isDetecting}
           >
             <SearchIcon className="w-5 h-5" />
           </button>

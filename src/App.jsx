@@ -10,9 +10,24 @@ import { useTheme } from "./hooks/useTheme";
 import { ToastProvider } from "./context/ToastContext.jsx";
 import { useState, useCallback, useEffect } from "react";
 
+function getInitialCity() {
+  const savedLocation = localStorage.getItem("weather-app-last-location");
+  if (!savedLocation) return "cairo";
+
+  try {
+    const { latitude, longitude } = JSON.parse(savedLocation);
+    return Number.isFinite(latitude) && Number.isFinite(longitude)
+      ? `${latitude},${longitude}`
+      : "cairo";
+  } catch {
+    localStorage.removeItem("weather-app-last-location");
+    return "cairo";
+  }
+}
+
 function App() {
   const { timeOfDay, handleThemeChange, themes, currentTheme } = useTheme();
-  const [city, setCity] = useState("cairo");
+  const [city, setCity] = useState(getInitialCity);
   const [unit, setUnit] = useState(
     () => localStorage.getItem("weather-app-unit") || "celsius",
   );
@@ -25,12 +40,14 @@ function App() {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
+          localStorage.setItem(
+            "weather-app-last-location",
+            JSON.stringify({ latitude, longitude }),
+          );
           setCity(`${latitude},${longitude}`);
         },
-        () => {
-          // Fallback to Cairo if geolocation fails
-          setCity("cairo");
-        },
+        () => {},
+        { enableHighAccuracy: false, timeout: 20000, maximumAge: 300000 },
       );
     }
   }, []);

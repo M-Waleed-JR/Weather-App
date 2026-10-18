@@ -57,8 +57,9 @@ function WeatherCardSkeleton({ timeOfDay }) {
   );
 }
 
-function WeatherCardError({ timeOfDay }) {
+function WeatherCardError({ timeOfDay, error }) {
   const { card, muted } = getThemeClasses(timeOfDay);
+  const isCityNotFound = error === "city-not-found";
 
   return (
     <div className="w-full max-w-md sm:max-w-lg lg:max-w-xl">
@@ -68,10 +69,12 @@ function WeatherCardError({ timeOfDay }) {
         <div className="flex flex-col items-center justify-center py-8 text-center">
           <AlertCircleIcon className={`${muted}`} />
           <p className={`text-lg font-medium ${muted}`}>
-            تعذر تحميل بيانات الطقس
+            {isCityNotFound ? "لم نعثر على هذه المدينة" : "تعذّر تحميل بيانات الطقس"}
           </p>
           <p className={`text-sm mt-1 ${muted}`}>
-            تحقق من اسم المدينة أو اتصالك بالإنترنت
+            {isCityNotFound
+              ? "جرّب كتابة الاسم بالعربية أو الإنجليزية، أو اختر موقعك الحالي."
+              : "تحقق من اتصالك بالإنترنت ثم حاول مرة أخرى."}
           </p>
         </div>
       </div>
@@ -119,7 +122,7 @@ export default function WeatherCard({
   onUnitToggle,
 }) {
   if (loading) return <WeatherCardSkeleton timeOfDay={timeOfDay} />;
-  if (error) return <WeatherCardError timeOfDay={timeOfDay} />;
+  if (error) return <WeatherCardError timeOfDay={timeOfDay} error={error} />;
   if (!data) return null;
 
   const { cityName, currentTemp, maxTemp, minTemp, description, iconCode } =
